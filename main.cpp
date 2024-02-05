@@ -1,6 +1,7 @@
 // Online C++ compiler to run C++ program online
 #include <iostream>
 #include <cstring>
+#include <memory>
 
 #define ABSOLUTE_VALUE      0xFFFFFF
 #define FIRST               0x1F
@@ -15,7 +16,7 @@ struct IPAddress_Data
     unsigned char       network_host2[4] = { 0 };
 };
 
-void obtain_network_id(const char *ip_address, struct IPAddress_Data*& ip_data)
+std::unique_ptr<struct IPAddress_Data> obtain_network_id(const char *ip_address, std::unique_ptr<struct IPAddress_Data> ip_data)
 {
     unsigned int dot, last_dot = 0;
     
@@ -31,9 +32,11 @@ void obtain_network_id(const char *ip_address, struct IPAddress_Data*& ip_data)
         dot++;
     
     memcpy((void *)&ip_data->network_id2, (const void *)(ip_address + last_dot + 1), dot - last_dot - 1);
+    
+    return ip_data;
 }
 
-void obtain_host(const char *ip_address, struct IPAddress_Data*& ip_data)
+std::unique_ptr<struct IPAddress_Data> obtain_host(const char *ip_address, std::unique_ptr<struct IPAddress_Data> ip_data)
 {
     unsigned int dot = 0;
     unsigned int last_dot = 0;
@@ -60,14 +63,17 @@ void obtain_host(const char *ip_address, struct IPAddress_Data*& ip_data)
         dot++;
     
     memcpy((void *)ip_data->network_host2, (const void *)(ip_address + last_dot + 1), dot - last_dot - 1);
+    
+    return ip_data;
 }
 
 int main() {
     const char *ip_address = "127.0.0.1";
     
-    struct IPAddress_Data *ip_data = new struct IPAddress_Data;
-    obtain_network_id(ip_address, ip_data);
-    obtain_host(ip_address, ip_data);
+    std::unique_ptr<struct IPAddress_Data> ip_data = std::unique_ptr<struct IPAddress_Data>{new struct IPAddress_Data};
+    
+    ip_data = obtain_network_id(ip_address, std::move(ip_data));
+    ip_data = obtain_host(ip_address, std::move(ip_data));
     
     std::cout << ip_data->network_id1 << ":" 
         << ip_data->network_id2 << ":"
