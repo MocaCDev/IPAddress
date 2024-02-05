@@ -33,7 +33,7 @@ std::unique_ptr<struct IPAddress_Data> obtain_network_id(const char *ip_address,
     
     memcpy((void *)&ip_data->network_id2, (const void *)(ip_address + last_dot + 1), dot - last_dot - 1);
     
-    return ip_data;
+    return std::move(ip_data);
 }
 
 std::unique_ptr<struct IPAddress_Data> obtain_host(const char *ip_address, std::unique_ptr<struct IPAddress_Data> ip_data)
@@ -64,7 +64,7 @@ std::unique_ptr<struct IPAddress_Data> obtain_host(const char *ip_address, std::
     
     memcpy((void *)ip_data->network_host2, (const void *)(ip_address + last_dot + 1), dot - last_dot - 1);
     
-    return ip_data;
+    return std::move(ip_data);
 }
 
 int main() {
