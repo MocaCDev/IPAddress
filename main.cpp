@@ -79,15 +79,6 @@ int main() {
         << ip_data->network_id2 << ":"
         << ip_data->network_host1 << ":"
         << ip_data->network_host2 << std::endl;
-    
-    /* Testing. */
-    unsigned int a = 0xFFFFFF;
-    a <<= 8;
-    a |= 0x90;
-    int a2 = -0x90;
-    printf("%X\n", a2);
-    
-    printf("%X", a);
 
     return 0;
 }
